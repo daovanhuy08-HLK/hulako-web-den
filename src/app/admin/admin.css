@@ -1,0 +1,41 @@
+/* Lớp riêng cho khu quản trị (không đụng globals.css). Màu theo mockup: nền #F9F8F6, viền #E6E3DF, cam #FA6803. */
+.adm-root { background: #F9F8F6; color: #111; }
+.adm-root input[type="checkbox"], .adm-root input[type="radio"] { accent-color: #FA6803; width: 1.2rem; height: 1.2rem; flex: none; }
+
+/* Bảng: đầu bảng nền be ấm, hàng phân cách mảnh */
+.adm-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 15px; }
+.adm-table thead th { background: #F4F1ED; color: #111; font-weight: 600; text-align: left; padding: 12px 14px; white-space: nowrap; }
+.adm-table thead th:first-child { border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
+.adm-table thead th:last-child { border-top-right-radius: 10px; border-bottom-right-radius: 10px; }
+.adm-table tbody td { padding: 12px 14px; border-bottom: 1px solid #EFECE8; vertical-align: middle; }
+.adm-table tbody tr:last-child td { border-bottom: 0; }
+.adm-table tbody tr.is-active td { background: #FFF6EE; }
+.adm-table tbody tr:hover td { background: #FCFAF8; }
+
+/* Công tắc bật/tắt dùng checkbox thật (vẫn gửi form, đọc được bằng bàn phím) */
+.adm-switch { position: relative; display: inline-flex; align-items: center; cursor: pointer; }
+.adm-switch input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.adm-switch .track { width: 46px; height: 26px; border-radius: 999px; background: #E2DFDB; transition: background .15s; position: relative; flex: none; }
+.adm-switch .track::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 999px; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.2); transition: transform .15s; }
+.adm-switch input:checked + .track { background: #FA6803; }
+.adm-switch input:checked + .track::after { transform: translateX(20px); }
+.adm-switch input:focus-visible + .track { outline: 3px solid #FA6803; outline-offset: 2px; }
+
+/* Hộp thoại (xung đột khi lưu, ảnh đang được dùng) */
+.adm-backdrop { position: fixed; inset: 0; background: rgba(17,17,17,.35); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 60; }
+.adm-dialog { background: #fff; border-radius: 18px; width: 100%; max-width: 760px; max-height: calc(100vh - 32px); overflow: auto; box-shadow: 0 20px 60px rgba(0,0,0,.18); padding: 28px; }
+
+/* Ô Markdown có thanh công cụ */
+.adm-md-toolbar button { display: inline-flex; align-items: center; justify-content: center; min-width: 34px; height: 34px; border-radius: 8px; font-weight: 600; color: #3F3F3F; }
+.adm-md-toolbar button:hover { background: rgba(0,0,0,.05); color: #111; }
+
+/* Thanh cuộn mảnh cho cột danh sách */
+.adm-scroll { scrollbar-width: thin; scrollbar-color: #E2DFDB transparent; }
+
+/* Diff đơn giản trong lịch sử phiên bản */
+.adm-diff-add { background: #E7F6EC; }
+.adm-diff-del { background: #FDECEC; text-decoration: line-through; color: #8A1C1C; }
+
+/* Ô lưới mặc định min-width:auto → bảng/ô nhập dài đẩy cả cột rộng hơn màn hình điện thoại (tràn ngang).
+   Cho mọi ô lưới & flex-1 trong khu quản trị được co lại; bảng tự cuộn trong khung của nó. */
+.adm-root .grid > * { min-width: 0; }

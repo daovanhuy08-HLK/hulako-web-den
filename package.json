@@ -1,0 +1,63 @@
+{
+  "name": "hulako-web-den",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev -p 3200",
+    "build": "next build",
+    "vercel-build": "tsx scripts/vercel-build.ts && next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "tsx scripts/migrate.ts",
+    "db:seed": "tsx scripts/seed.ts",
+    "db:reset": "tsx scripts/reset-local.ts && tsx scripts/migrate.ts && tsx scripts/seed.ts",
+    "test": "tsx --test tests/*.test.ts",
+    "ai:runner": "node tools/ai-runner.mjs",
+    "ai:check": "node tools/ai-runner.mjs --check",
+    "ai:once": "node tools/ai-runner.mjs --once",
+    "ai:start": "npx pm2 start ecosystem.config.cjs --only hulako-web-runner",
+    "ai:stop": "npx pm2 stop hulako-web-runner",
+    "ai:logs": "npx pm2 logs hulako-web-runner --lines 50",
+    "agent:check": "node tools/seo-agent.mjs --check",
+    "agent:run": "node tools/seo-agent.mjs --run",
+    "agent:start": "npx pm2 start ecosystem.config.cjs --only hulako-seo-agent",
+    "agent:stop": "npx pm2 stop hulako-seo-agent",
+    "agent:logs": "npx pm2 logs hulako-seo-agent --lines 80"
+  },
+  "dependencies": {
+    "@electric-sql/pglite": "^0.5.16",
+    "@vercel/blob": "^2.9.0",
+    "cheerio": "^1.2.0",
+    "drizzle-orm": "^0.45.4",
+    "fast-xml-parser": "^5.12.1",
+    "jose": "^6.2.17",
+    "marked": "^18.2.0",
+    "next": "^15.5.29",
+    "postgres": "^3.4.9",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "robots-parser": "^3.1.1",
+    "sanitize-html": "^2.18.2",
+    "server-only": "^0.0.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@types/sanitize-html": "^2.16.2",
+    "autoprefixer": "^10.6.2",
+    "drizzle-kit": "^0.31.11",
+    "postcss": "^8.5.32",
+    "tailwindcss": "^3.4.19",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3"
+  },
+  "allowScripts": {
+    "esbuild@0.18.20": true,
+    "esbuild@0.25.12": true,
+    "esbuild@0.28.2": true
+  }
+}
