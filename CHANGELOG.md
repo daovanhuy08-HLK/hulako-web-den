@@ -27,6 +27,20 @@ Lịch sử mã nguồn gốc: dự án được dựng từ `../hulako-website`
 ### Bước tiếp theo
 - Khi cần: `node tools/set-admin-password.mjs` (website thật).
 
+## [2026-11-26] — Đưa mã nguồn lên GitHub (repo công khai)
+
+### Đã làm
+- Tạo repo công khai **https://github.com/daovanhuy08-HLK/hulako-web-den** (nhánh `main`). Commit đầu `2d62ad0` gồm 265 file, khoảng 3,8 MB.
+- Trước khi đẩy:
+  - Quét token, khoá và mật khẩu (Telegram, GitHub, Anthropic, private key, chuỗi kết nối Postgres/Neon, Resend, giá trị secret): không có.
+  - `.gitignore` chặn `.env*`, `.env.runner`, `.local-db`, `logs/`, `.vercel`, `*.db`. Kiểm tra lại: 0 file nhạy cảm trong commit.
+- Riêng repo này dùng email commit ẩn danh `318541253+daovanhuy08-HLK@users.noreply.github.com` (git config cục bộ), để email cá nhân không lộ trên repo công khai.
+- Thêm `HUONG-DAN-CAI-DAT.md`: cài sang máy khác, tạo `.env.runner`, chuyển runner/agent sang máy mới (chỉ 1 máy chạy), tự deploy Vercel. README có link tới hướng dẫn.
+
+### Vấn đề / Rủi ro
+- Repo công khai: ai cũng xem được mã nguồn và ảnh minh họa. Bí mật vẫn chỉ nằm trên Vercel và trong `.env.runner` trên máy.
+- Vercel vẫn deploy bằng CLI từ máy, chưa nối với GitHub. Sửa code xong cần `git push` để repo luôn mới.
+
 ## [2026-11-25] — SEO Agent 24/7 chạy trên máy (R&D, xu hướng, decode, spy, kế hoạch, báo cáo)
 
 ### Đã làm
