@@ -11,12 +11,15 @@
 //   POST /api/agent/insight            { kind, title, data, telegram? } → lưu phân tích (+ gửi Telegram)
 //   POST /api/agent/plan               { proposals[], summary }    → kế hoạch bài/ngày + giao viết nháp + Telegram
 //   POST /api/agent/report             {}                          → báo cáo thứ hạng & tối ưu qua Telegram
+//   GET  /api/agent/status             → trạng thái agent/runner/hàng đợi (bot Telegram)
+//   POST /api/agent/command            { job, by }                 → lệnh chạy ngay (bot Telegram)
+//   POST /api/agent/write              { keyword, title? }         → giao AI viết nháp cho 1 từ khoá
 //   POST /api/agent/refresh            {}                          → gom + chấm điểm lại từ khoá (không dùng AI)
 import { NextResponse } from "next/server";
 import { timingSafeEqual } from "node:crypto";
 import { apiError } from "@/lib/api";
 import {
-  agentContext, agentHeartbeat, agentPoll, buildRankSection, createDailyPlan, diffCompetitorUrls, markCompetitorError,
+  agentContext, agentHeartbeat, agentPoll, agentStatusSummary, queueAgentCommand, writeForKeyword, buildRankSection, createDailyPlan, diffCompetitorUrls, markCompetitorError,
   saveCompetitorPages, saveInsight, saveKeywords, saveSerp, type Proposal,
 } from "@/lib/seo/agent";
 import { buildSeoReport } from "@/lib/seo/report";
@@ -41,6 +44,7 @@ export async function GET(req: Request, { params }: Ctx) {
   await agentHeartbeat(host(req));
   if (p === "ping") return NextResponse.json(await agentPoll());
   if (p === "context") return NextResponse.json(await agentContext());
+  if (p === "status") return NextResponse.json(await agentStatusSummary());
   return apiError(404, "not_found", "Không có tuyến này");
 }
 
@@ -76,6 +80,13 @@ export async function POST(req: Request, { params }: Ctx) {
         if (sent === "sent") await saveInsight("rank", "Báo cáo thứ hạng & tối ưu", { length: text.length });
         return NextResponse.json({ ok: sent === "sent", sent });
       }
+      case "command": {
+        const job = s("job");
+        if (!["trends", "research", "spy", "refresh", "plan", "report"].includes(job)) return apiError(422, "bad_job", "Việc không hợp lệ");
+        return NextResponse.json(await queueAgentCommand(job, s("by") || "telegram"));
+      }
+      case "write":
+        return NextResponse.json(await writeForKeyword(s("keyword"), s("title") || undefined));
       case "refresh": {
         const day = new Date().toISOString().slice(0, 10);
         const out: Record<string, unknown> = {};

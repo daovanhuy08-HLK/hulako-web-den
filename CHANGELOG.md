@@ -27,6 +27,25 @@ Lịch sử mã nguồn gốc: dự án được dựng từ `../hulako-website`
 ### Bước tiếp theo
 - Khi cần: `node tools/set-admin-password.mjs` (website thật).
 
+## [2026-11-27] — Bot Telegram @ceotopbot_bot hai chiều (trả lời mọi tin + lệnh pipeline)
+
+### Đã làm
+- `tools/telegram-bot.mjs` (pm2 `hulako-seo-bot`, lệnh `npm run bot:check|start|stop|logs`): long polling, không dùng webhook.
+  - **Lệnh** `/kehoach /baocao /xuhuong /nghiencuu /doithu /chamdiem` (kèm tên tiếng Anh) đưa vào cùng hàng lệnh với nút "Chạy ngay". Bot theo dõi `/api/agent/status` và báo khi việc xong (chờ tối đa 40 phút).
+  - `/viet <từ khoá>`: AI viết nháp ngay.
+  - `/trangthai`, `/quen`, `/help`. Danh sách lệnh đăng lên Telegram (setMyCommands).
+  - **Tin nhắn thường:** Claude CLI (WebSearch/WebFetch) trả lời. Có dữ liệu thật của web (từ khoá, Search Console, bài, đối thủ, phân tích gần đây) và DNA HULAKO, nhớ 12 tin gần nhất. Tin không phải chữ (ảnh, voice, sticker…) được trả lời rằng bot mới đọc được chữ.
+  - Chỉ phục vụ `TELEGRAM_ADMIN_CHAT_ID` và `BOT_ALLOWED_CHAT_IDS`. Chat lạ bị từ chối, không tốn AI. Hạn mức `BOT_DAILY_LIMIT` = 80 lượt/ngày.
+- API mới (RUNNER_TOKEN): `GET /api/agent/status`, `POST /api/agent/command`, `POST /api/agent/write`. Code trong `src/lib/seo/agent.ts`: `agentStatusSummary`, `queueAgentCommand`, `writeForKeyword`.
+- README, HUONG-DAN-CAI-DAT bổ sung phần bot.
+
+### Kiểm thử
+- Typecheck, 13/13 test, build đạt, deploy Production. `/api/agent/status` không token trả 401, có token trả 200 (12 bài chờ duyệt, 6 tác vụ lỗi trong 3 ngày).
+- `node --check tools/telegram-bot.mjs` đạt.
+
+### Đang làm dở
+- Chưa bật bot. Cần file `.env.telegram` (token + chat ID). Quyền trên máy chặn Claude ghi file `.env*`, nên chủ website tự tạo bằng lệnh PowerShell, sau đó chạy `npm run bot:check`, `npm run bot:start`, rồi `pm2 save`.
+
 ## [2026-11-26] — Đưa mã nguồn lên GitHub (repo công khai)
 
 ### Đã làm

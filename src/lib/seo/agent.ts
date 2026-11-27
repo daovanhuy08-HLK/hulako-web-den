@@ -292,3 +292,42 @@ export async function buildRankSection() {
   }
   return lines.join("\n");
 }
+
+// ───────────── Bot Telegram hai chiều (tools/telegram-bot.mjs) ─────────────
+/** Trạng thái tổng quát cho lệnh /trangthai và để bot biết lệnh đã chạy xong chưa */
+export async function agentStatusSummary() {
+  const db = await getDb();
+  const [cfg, st, runner, cmds, [q], [drafts]] = await Promise.all([
+    getSetting("seoAgent"), getSetting("seoAgentStatus"), getSetting("runnerStatus"), getSetting("seoAgentCommands"),
+    db.select({ waiting: sql<number>`count(*) filter (where ${schema.aiJobs.status} in ('waiting_runner','runner_running','queued'))::int`, failed: sql<number>`count(*) filter (where ${schema.aiJobs.status} = 'failed' and ${schema.aiJobs.createdAt} > now() - interval '3 days')::int` }).from(schema.aiJobs),
+    db.select({ n: sql<number>`count(*)::int` }).from(schema.articles).where(inArray(schema.articles.status, ["draft", "review"])),
+  ]);
+  return { config: cfg, agent: st, runner, pendingCommands: cmds.pending, queue: { waiting: Number(q?.waiting ?? 0), failed: Number(q?.failed ?? 0) }, draftsToReview: Number(drafts?.n ?? 0) };
+}
+
+/** Lệnh "chạy ngay" từ bot (cùng hàng lệnh với nút trên trang quản trị) */
+export async function queueAgentCommand(job: string, by: string) {
+  const cmds = await getSetting("seoAgentCommands");
+  if (!cmds.pending.some((c) => c.job === job)) cmds.pending.push({ job, at: new Date().toISOString(), by: by.slice(0, 60) });
+  await setSetting("seoAgentCommands", { pending: cmds.pending.slice(-10) });
+  return { queued: true, at: new Date().toISOString() };
+}
+
+/** /viet <từ khoá>: tạo cơ hội + giao runner viết bản nháp ngay (không tính hạn mức tự động/ngày vì chủ website ra lệnh) */
+export async function writeForKeyword(keyword: string, title?: string) {
+  const db = await getDb();
+  const kw = keyword.trim().slice(0, 200);
+  const normalized = normalizeVi(kw);
+  if (normalized.length < 3) throw new Error("Từ khoá quá ngắn");
+  await saveKeywords([{ query: kw, note: "Chủ website yêu cầu qua Telegram" }], "telegram");
+  const [k] = await db.select({ id: schema.keywords.id }).from(schema.keywords).where(eq(schema.keywords.normalized, normalized));
+  const [opp] = await db.insert(schema.opportunities).values({
+    type: "new", title: `Viết mới: ${(title || kw).slice(0, 180)}`, keywordIds: k ? [k.id] : [], score: 90,
+    rationale: "Chủ website yêu cầu viết qua bot Telegram", evidence: { source: "telegram", keyword: kw }, factors: {}, dedupeKey: `telegram:new:${normalized}`,
+  }).onConflictDoUpdate({ target: schema.opportunities.dedupeKey, set: { score: 90 } })
+    .returning({ id: schema.opportunities.id, status: schema.opportunities.status, draftArticleId: schema.opportunities.draftArticleId });
+  if (opp.draftArticleId) return { already: true, articleId: opp.draftArticleId };
+  const { job, created } = await enqueue("write_draft", { opportunityId: opp.id }, `telegram:${opp.id}`, "agent");
+  if (created) await runJob(job.id).catch(() => null);
+  return { already: false, jobId: job.id, created };
+}

@@ -36,5 +36,22 @@ module.exports = {
       error_file: 'logs/seo-agent.err.log',
       env: { NODE_ENV: 'production', TZ: 'Asia/Ho_Chi_Minh' },
     },
+    {
+      // Bot Telegram hai chiều @ceotopbot_bot: lệnh → pipeline SEO Agent, tin nhắn thường → AI trả lời (cấu hình .env.telegram)
+      name: 'hulako-seo-bot',
+      script: 'tools/telegram-bot.mjs',
+      cwd: __dirname,
+      interpreter: 'node',
+      windowsHide: true,
+      autorestart: true,
+      max_restarts: 1000,
+      restart_delay: 30000,
+      exp_backoff_restart_delay: 5000,
+      max_memory_restart: '300M',
+      time: true,
+      out_file: 'logs/telegram-bot.out.log',
+      error_file: 'logs/telegram-bot.err.log',
+      env: { NODE_ENV: 'production', TZ: 'Asia/Ho_Chi_Minh' },
+    },
   ],
 };

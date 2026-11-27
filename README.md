@@ -67,6 +67,21 @@ npm run agent:start          # bật chạy ngầm 24/7 (pm2)   ·   npm run age
 Biến trong `.env.runner`: `AGENT_DAILY_LIMIT` (lượt Claude/ngày của agent, mặc định 60), `AGENT_MODEL` (mặc định theo `AI_MODEL`).
 Thư viện: `cheerio` (đọc cấu trúc bài), `robots-parser` (tôn trọng robots.txt), `fast-xml-parser` (sitemap, Google Trends RSS).
 
+## Bot Telegram hai chiều (`tools/telegram-bot.mjs`, pm2 `hulako-seo-bot`)
+
+@ceotopbot_bot: **lệnh** chạy pipeline SEO Agent; **nhắn thường** thì AI (Claude CLI, có tìm web) trả lời dựa trên số liệu thật của web. Chỉ trả lời chat của chủ website.
+
+| Lệnh | Việc |
+|---|---|
+| `/kehoach` (`/plan`) | Kế hoạch 5–20 bài hôm nay + decode + AI viết nháp |
+| `/baocao` (`/report`) | Báo cáo thứ hạng & tối ưu |
+| `/xuhuong` `/nghiencuu` `/doithu` `/chamdiem` | Xu hướng 24–72h · R&D từ khoá · spy đối thủ · chấm điểm lại |
+| `/viet <từ khoá>` | AI viết bản nháp cho 1 từ khoá |
+| `/trangthai` · `/quen` · `/help` | Trạng thái · xoá trí nhớ hội thoại · danh sách lệnh |
+
+Cấu hình `.env.telegram` (không commit): `TELEGRAM_BOT_TOKEN`, `TELEGRAM_ADMIN_CHAT_ID`, `BOT_ALLOWED_CHAT_IDS`, `BOT_DAILY_LIMIT` (mặc định 80).
+`npm run bot:check` · `npm run bot:start` · `npm run bot:logs` · `npm run bot:stop`
+
 ## AI SEO Agent & vòng phản hồi
 
 Hằng ngày: thu Search Console, dọn dữ liệu quá hạn. Hằng tuần: **vòng học** (đánh giá thí nghiệm 28 ngày → học lại trọng số chấm điểm) → gom từ khoá → AI đề xuất từ khoá → chấm điểm cơ hội → AI viết nháp các cơ hội điểm cao. Hằng tháng: AI đề xuất phiên bản hướng dẫn viết mới dựa trên tỷ lệ thắng.

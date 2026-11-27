@@ -7,6 +7,7 @@ Repo này chứa **toàn bộ mã nguồn** website + runner AI + SEO Agent. Cá
 | Mã nguồn, ảnh minh họa, migration CSDL | ✅ | repo này |
 | `.env.local` (mật khẩu admin khi chạy thử trên máy) | ❌ | tự sinh khi chạy `npm run db:seed` |
 | `.env.runner` (token để runner/agent nói chuyện với website) | ❌ | chép từ máy cũ bằng USB, **hoặc** tạo token mới (mục 3) |
+| `.env.telegram` (token bot Telegram hai chiều) | ❌ | chép từ máy cũ, hoặc lấy token ở @BotFather |
 | CSDL thật (Neon), biến bí mật trên Vercel | ❌ | nằm trên Vercel/Neon, không cần chép |
 | `node_modules`, `.next`, `logs/`, `.local-db` | ❌ | tự tạo lại |
 
@@ -62,6 +63,8 @@ npm run ai:start        # runner viết bài (pm2, chạy ngầm)
 npm run agent:start     # SEO Agent 24/7 (pm2, chạy ngầm)
 npx pm2 save            # lưu danh sách để tự bật lại
 ```
+
+Bot Telegram hai chiều: tạo file `.env.telegram` gồm `TELEGRAM_BOT_TOKEN=...` và `TELEGRAM_ADMIN_CHAT_ID=...`, rồi chạy `npm run bot:check` và `npm run bot:start`. Chỉ 1 máy được chạy bot, vì Telegram không cho 2 nơi cùng nhận tin.
 
 Để pm2 **tự chạy lại khi bật máy**:
 1. Tạo một tác vụ trong Task Scheduler, chạy lúc đăng nhập Windows.

@@ -24,7 +24,11 @@
     "agent:run": "node tools/seo-agent.mjs --run",
     "agent:start": "npx pm2 start ecosystem.config.cjs --only hulako-seo-agent",
     "agent:stop": "npx pm2 stop hulako-seo-agent",
-    "agent:logs": "npx pm2 logs hulako-seo-agent --lines 80"
+    "agent:logs": "npx pm2 logs hulako-seo-agent --lines 80",
+    "bot:check": "node tools/telegram-bot.mjs --check",
+    "bot:start": "npx pm2 start ecosystem.config.cjs --only hulako-seo-bot",
+    "bot:stop": "npx pm2 stop hulako-seo-bot",
+    "bot:logs": "npx pm2 logs hulako-seo-bot --lines 80"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.5.16",
