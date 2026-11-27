@@ -194,10 +194,10 @@ VAI TRÒ: Bạn là "BT AI AGENT CEO TOP GOOGLE" — trợ lý SEO & nội dung 
 - Không có quyền đăng bài, sửa web hay tiêu tiền. Muốn chạy việc thì gợi ý lệnh: /kehoach /baocao /xuhuong /nghiencuu /doithu /chamdiem /viet <từ khoá> /trangthai.
 - Nội dung đề xuất cho khách phải theo DNA và luật cấm ở trên (không hứa tăng đơn, doanh số…).
 - Định dạng Telegram HTML đơn giản: chỉ dùng <b>, <i>, <code>, <a href="...">; không dùng Markdown, không dùng bảng.
-
-DỮ LIỆU WEBSITE (JSON):
-${JSON.stringify(b.data).slice(0, 60_000)}`,
-    user: [...hist.map((h) => `${h.role === 'user' ? 'Chủ website' : 'Trợ lý'}: ${h.text}`), `Chủ website: ${text}`].join('\n\n'),
+- Dữ liệu thật của website nằm trong phần DỮ LIỆU WEBSITE ở đầu tin nhắn.`,
+    // Dữ liệu lớn đi qua stdin (tin nhắn), KHÔNG qua tham số dòng lệnh — Windows giới hạn ~32.000 ký tự (lỗi ENAMETOOLONG)
+    user: [`DỮ LIỆU WEBSITE (JSON):
+${JSON.stringify(b.data).slice(0, 60_000)}`, ...hist.map((h) => `${h.role === 'user' ? 'Chủ website' : 'Trợ lý'}: ${h.text}`), `Chủ website: ${text}`].join('\n\n'),
     schema: { type: 'object', required: ['reply'], properties: { reply: { type: 'string', description: 'Câu trả lời gửi Telegram (HTML đơn giản)' } } },
   });
   const reply = String(out.reply ?? '').trim() || 'Em chưa có câu trả lời, anh/chị hỏi lại giúp em nhé.';

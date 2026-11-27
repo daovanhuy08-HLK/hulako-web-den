@@ -43,8 +43,8 @@ Lịch sử mã nguồn gốc: dự án được dựng từ `../hulako-website`
 - Typecheck, 13/13 test, build đạt, deploy Production. `/api/agent/status` không token trả 401, có token trả 200 (12 bài chờ duyệt, 6 tác vụ lỗi trong 3 ngày).
 - `node --check tools/telegram-bot.mjs` đạt.
 
-### Đang làm dở
-- Chưa bật bot. Cần file `.env.telegram` (token + chat ID). Quyền trên máy chặn Claude ghi file `.env*`, nên chủ website tự tạo bằng lệnh PowerShell, sau đó chạy `npm run bot:check`, `npm run bot:start`, rồi `pm2 save`.
+- Chủ website đã tạo `.env.telegram`. `bot:check` OK, pm2 `hulako-seo-bot` online, `pm2 save` (12 app). Tin chào đã gửi.
+- Sửa lỗi `spawn ENAMETOOLONG`: dữ liệu website (~60 nghìn ký tự) từng nằm trong `--system-prompt`, vượt giới hạn dòng lệnh Windows (~32 nghìn). Nay chuyển sang stdin (tin nhắn gửi Claude).
 
 ## [2026-11-26] — Đưa mã nguồn lên GitHub (repo công khai)
 
